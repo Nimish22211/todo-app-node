@@ -1,0 +1,129 @@
+.inputs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 50px;
+  gap: 10px
+}
+
+.inputs>input {
+  font-size: 25px;
+  padding: 10px;
+}
+
+.form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form>button {
+  height: 40px;
+  /* width:200px; */
+  width: 340px;
+  border: none;
+  border-radius: 5px;
+  background-color: #23b9ff;
+  border: 1px solid white;
+  color: white;
+  font-size: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.25s
+}
+
+.form>button:hover {
+  color: #23b9ff;
+  border: none;
+  background-color: #fff;
+}
+
+details {
+  font-size: 25px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+button:disabled {
+  background-color: #72bce1;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: #72bce1;
+}
+
+.main {
+  /* background-color: #23b9ff;
+   */
+  background: rgb(249, 249, 249);
+  background: linear-gradient(90deg, rgba(249, 249, 249, 1) 0%, rgba(162, 225, 255, 1) 17%, rgba(35, 185, 255, 1) 80%);
+  min-height: calc(100vh - 81px);
+}
+
+.todos {
+  margin-top: 50px;
+  display: flex;
+  font-size: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.todobox {
+  background-color: yellow;
+  margin-bottom: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  width: 500px;
+  align-items: center;
+}
+
+
+.icons>a {
+  padding: 15px 20px;
+  margin: 0;
+  color: darkgreen;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.icons>span:nth-child(2) {
+  padding: 15px 20px;
+  margin: 0;
+  color: red;
+  font-weight: bold;
+}
+
+.icons>a:hover {
+  background-color: darkgreen;
+  color: rgb(255, 255, 0);
+  transition: 200ms;
+}
+
+.icons>span:nth-child(2):hover {
+  background-color: red;
+  color: yellow;
+  transition: 200ms;
+
+}
+
+.todobox>a {
+  flex: 1;
+  text-decoration: none;
+  color: black
+}
+
+.todobox>a>p {
+  flex: 1;
+  margin: 0;
+  padding: 15px;
+}
+
+.todobox>a>p:hover {
+
+  background-color: rgb(226, 226, 3)
+}

@@ -1,0 +1,59 @@
+.todo-main {
+    background: rgb(2, 0, 36);
+    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 20%, rgba(35, 185, 255, 1) 75%);
+    color: white;
+    height: calc(100vh - 81px);
+    display: flex;
+    /* flex-direction: column; */
+    justify-content: space-between;
+    align-items: flex-start
+}
+
+.center-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    margin-top: 20px;
+}
+
+.todo-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid rgb(248, 248, 248);
+    /* width: max-content; */
+    padding: 20px;
+    width: 50%;
+}
+
+.todo-info>h1 {
+    font-size: 50px;
+    font-weight: bold;
+    /* margin-bottom: 20px; */
+}
+
+.todo-desc {
+    color: rgb(182, 182, 182);
+    font-size: 20px;
+}
+
+.todo-main>button:nth-child(1) {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.todo-main>button:last-of-type {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-right: 20px;
+}
+
+.modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
