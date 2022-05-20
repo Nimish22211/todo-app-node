@@ -19,7 +19,7 @@ function App() {
 
   useEffect(() => {
     console.clear()
-    fetch('http://localhost:8000/' + emailName + '@gmail.com').then(res => res.json())
+    // fetch('http://localhost:8000/' + emailName + '@gmail.com').then(res => res.json())
     console.log(todos)
 
   }, [todos])
@@ -33,7 +33,7 @@ function App() {
       body: JSON.stringify({
         title: input,
         description: desc,
-        completed: false,
+        completed: '',
         id: uuidv4(),
         email: loggedUser.email
       })
@@ -76,8 +76,11 @@ function App() {
               </form> : "Loading"}
               <div className="todos">
                 {todos.map((todo, index) => {
-                  let status = todo.completed ? 'completed' : 'not completed';
+                  let status = todo.completed === "" ? "" : todo.completed === true ? "completed" : 'not completed';
+                  let svgClass = 'svg-inline--fa fa-circle-check'; //default svg class
+                  let checkedColor = status === '' ? 'check ' + svgClass : status === "completed"  ? 'check checked ' + svgClass : 'check notdone ' + svgClass
                   const changeStatus = (index) => {
+                    console.log(status)
                     fetch('http://localhost:8000/updatetodo/' + todo.id, {
                       method: 'PATCH',
                       headers: {
@@ -91,14 +94,19 @@ function App() {
                         completed: status,
                         id: todo.id
                       })
+                    }).then(res => res.json()).then(data => {
+                      status = data.completed
                     })
-                    document.getElementsByClassName('check')[index].classList.toggle('checked')
+                    document.getElementById('checkIcon' + index).removeAttribute('class');
+                    const attr = document.createAttribute('class');
+                    attr.value = checkedColor
+                    document.getElementById('checkIcon' + index).setAttributeNode(attr)
                   }
 
 
                   return (
                     <div className="todobox" >
-                      <FontAwesomeIcon className="check" icon={faCircleCheck} onClick={() => { changeStatus(index) }} />
+                      <FontAwesomeIcon id={'checkIcon' + index} className={checkedColor} icon={faCircleCheck} onClick={() => { changeStatus(index) }} />
 
                       <Link to={loggedUser && `/${emailName}/todo?id=${todo.id}&edit=false`}>
                         <p className={status === "completed" && "todoTitle"}>{todo.title}</p>
@@ -108,7 +116,7 @@ function App() {
                         <Link to={loggedUser && `/${emailName}/todo?id=${todo.id}&edit=true`}> <FontAwesomeIcon icon={faPenToSquare} /></Link>
 
                         {/* <span onClick={() => deleteTodo(todo.id)}>DEL</span> */}
-                        <FontAwesomeIcon className="deleteIcon" icon={faTrash} onClick={deleteTodo(todo.id)} />
+                        <FontAwesomeIcon className="deleteIcon" icon={faTrash} onClick={() => deleteTodo(todo.id)} />
                       </div>
                     </div>
                   )

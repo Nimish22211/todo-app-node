@@ -111,6 +111,10 @@ button:disabled:hover {
   transition: 300ms
 }
 
+.todobox > .notdone {
+  background-color: red;
+}
+
 .icons>a {
   flex: 0.5;
   color: black;

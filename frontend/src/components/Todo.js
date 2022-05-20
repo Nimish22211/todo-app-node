@@ -5,11 +5,10 @@ import './Todo.css'
 function Todo({ emailName }) {
     const [search] = useSearchParams();
     const [todo, setTodo] = useState({})
-    const history = useNavigate();
     const [modal, setModal] = useState(false)
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
-    const [checked, setChecked] = useState(false)
+    const [checked, setChecked] = useState(undefined)
 
     useEffect(() => {
         let id = search.get('id')
