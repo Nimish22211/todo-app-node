@@ -7,6 +7,8 @@ const cors = require('cors');
 
 app.use(cors({
     origin: 'http://localhost:3000',
+    'Access-Control-Allow-Methods': '*'
+
 }));
 
 app.use(express.json());
@@ -70,13 +72,58 @@ app.get('/:email/todo', (req, res) => {
     getTodo(email, id).then(todo => res.send(todo))
 })
 
-// https://localhost:8000/xyzEmail/todo?id=1234
-
 const getTodo = async (email, todoId) => {
     email = email.concat('@gmail.com')
     const user = await users.findOne({ email })
     const todo = await user.todos.find(todo => todo.id === todoId)
     return todo
+}
+
+app.patch('/deletetodo', (req, res) => {
+    const { email, id } = req.body
+    deleteTodo(email, id).then(user => res.send(user))
+})
+
+const deleteTodo = async (email, todoId) => {
+    const user = await users.findOne({ email })
+    // user.todos.filter(todo => todo.id !== todoId)
+    user.todos = user.todos.filter(todo => todo.id !== todoId)
+    user.save()
+    return user
+    // delete todo
+
+}
+
+app.patch('/updatetodo/:id', (req, res) => {
+    const { email, id, title, description, completed } = req.body
+    updateTodo(email, id, title, description, completed)
+        .then(todo => res.send(todo))
+    console.log('update')
+})
+
+const updateTodo = async (email, todoId, title, description, completed) => {
+    const user = await users.findOne({ email })
+    let todos = await user.todos
+    let todo = await user.todos.find(todo => todo.id === todoId)
+    let index = todos.indexOf(todo)
+    user.todos[index] = {
+        id: todoId,
+        title,
+        description,
+        completed
+    }
+    user.save()
+    return user
+}
+
+app.get('/:emailName/gettodos', (req, res) => {
+    const { email } = req.params
+    getTodos(email).then(todos => res.send(todos))
+})
+
+const getTodos = async () => {
+    const user = await users.findOne()
+    return user.todos
 }
 
 app.get('/', (req, res) => {
