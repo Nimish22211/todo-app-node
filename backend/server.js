@@ -98,22 +98,24 @@ app.patch('/updatetodo/:id', (req, res) => {
     const { email, id, title, description, completed } = req.body
     updateTodo(email, id, title, description, completed)
         .then(todo => res.send(todo))
-    console.log('update')
-})
-
-const updateTodo = async (email, todoId, title, description, completed) => {
-    const user = await users.findOne({ email })
-    let todos = await user.todos
-    let todo = await user.todos.find(todo => todo.id === todoId)
-    let index = todos.indexOf(todo)
-    user.todos[index] = {
-        id: todoId,
-        title,
-        description,
-        completed
-    }
-    user.save()
-    return user
+    })
+    
+    const updateTodo = async (email, todoId, title, description, completed) => {
+        const user = await users.findOne({ email })
+        let todos = await user.todos
+        let todo = await user.todos.find(todo => todo.id === todoId)
+        let index = todos.indexOf(todo)
+        let status = completed === ('' || 'not completed' ) ? true : false 
+        console.log(completed, status)
+        // user.todos[index] = {
+        //     id: todoId,
+        //     title,
+        //     description,
+        //     completed:status
+        // }
+        user.save()
+        console.log('update')
+        return user
 }
 
 app.get('/:emailName/gettodos', (req, res) => {
