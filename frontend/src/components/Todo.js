@@ -7,8 +7,10 @@ function Todo({ emailName }) {
     const [todo, setTodo] = useState({})
     const history = useNavigate();
     const [modal, setModal] = useState(false)
-    const [title, setTitle] = useState()
-    const [description, setDescription] = useState()
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
+    const [checked, setChecked] = useState(false)
+
     useEffect(() => {
         let id = search.get('id')
         let edit = search.get('edit')
@@ -17,20 +19,56 @@ function Todo({ emailName }) {
             setTodo(data)
             setTitle(data.title)
             setDescription(data.description)
+            setChecked(data.completed)
         })())
         if (edit === "false") {
-            console.log('false')
             setModal(false)
         } else {
-            console.log('true')
             setModal(true)
         }
-
     }, [])
+
+    //TODO: completed status of todo is not being linked with the checkbox 
+
+    const checkBox = (e) => {
+        e.currentTarget.checked ? setTodo({ ...todo, completed: true }) : setTodo({ ...todo, completed: false })
+        setChecked(!checked)
+    }
+    useEffect(() => {
+        let checkbox = document.getElementById('checkbox')
+        if (checkbox) {
+            document.getElementById('checkbox').checked = checked
+        }
+    }, [checked])
+
+    const updateTodo = () => {
+        let confirm = window.confirm("Are you sure you want to save?")
+        if (confirm) {
+            fetch('http://localhost:8000/updatetodo/' + todo.id, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Methods': 'PATCH'
+                },
+                body: JSON.stringify({
+                    email: emailName + '@gmail.com',
+                    title: title,
+                    description: description,
+                    completed: checked,
+                    id: todo.id
+                })
+            }).then(res => res.json()).then(data => (() => {
+                setTodo(data)
+                setTitle(data.title)
+                setDescription(data.description)
+                setChecked(data.completed)
+            })())
+        }
+    }
     return (
         <div className="todo-main">
 
-            <button onClick={() => history(-1)}>Back</button>
+            <button onClick={() => window.location.href = 'http://localhost:3000/' + emailName}>Back</button>
             {modal === false ? <>
                 <div className="center-info">
                     <main className="todo-info">
@@ -44,9 +82,11 @@ function Todo({ emailName }) {
                     <div className="modal-content inputs">
                         <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="change title" />
                         <input type="text" value={description} placeholder="change description" onChange={e => setDescription(e.target.value)} />
-
+                        <span className="todo-status">Completed
+                            <input type="checkbox" value={checked} id="checkbox" onChange={(e) => checkBox(e)} />
+                        </span>
                     </div>
-                    <button> Save</button>
+                    <button onClick={updateTodo}> Save</button>
                 </div>
                 <button onClick={() => setModal(false)}>Cancel</button>
             </>

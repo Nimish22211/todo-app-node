@@ -5,6 +5,9 @@ import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Todo from './components/Todo';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash, faPenToSquare, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+
 
 function App() {
   const [loggedUser, setLoggedUser] = useState(null);
@@ -16,15 +19,16 @@ function App() {
 
   useEffect(() => {
     console.clear()
-
+    fetch('http://localhost:8000/' + emailName + '@gmail.com').then(res => res.json())
     console.log(todos)
+
   }, [todos])
   const addTodo = (e) => {
     e.preventDefault();
     fetch('http://localhost:8000/addtodo', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         title: input,
@@ -37,6 +41,20 @@ function App() {
     setInput('')
     setDesc('')
 
+  }
+
+  const deleteTodo = (id) => {
+    fetch('http://localhost:8000/deletetodo', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Methods': 'PATCH'
+      },
+      body: JSON.stringify({
+        email: loggedUser.email,
+        id: id
+      })
+    }).then(res => res.json()).then(data => setTodos(data.todos.reverse()))
   }
 
   return (
@@ -57,17 +75,44 @@ function App() {
                 {/* set disabled version of submit button */}
               </form> : "Loading"}
               <div className="todos">
-                {todos.map(todo => <div className="todobox" >
-                  <Link to={loggedUser && `/${emailName}/todo?id=${todo.id}&edit=false`}>
-                    <p>{todo.title}</p>
-                  </Link>
-                  <div className="icons">
-                    {/* <span onClick={ }>EDIT</span> */}
-                    <Link to={loggedUser && `/${emailName}/todo?id=${todo.id}&edit=true`}> <span>EDIT</span></Link>
+                {todos.map((todo, index) => {
+                  let status = todo.completed ? 'completed' : 'not completed';
+                  const changeStatus = (index) => {
+                    fetch('http://localhost:8000/updatetodo/' + todo.id, {
+                      method: 'PATCH',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Methods': 'PATCH'
+                      },
+                      body: JSON.stringify({
+                        email: emailName + '@gmail.com',
+                        title: todo.title,
+                        description: todo.description,
+                        completed: status,
+                        id: todo.id
+                      })
+                    })
+                    document.getElementsByClassName('check')[index].classList.toggle('checked')
+                  }
 
-                    <span>DEL</span>
-                  </div>
-                </div>)}
+
+                  return (
+                    <div className="todobox" >
+                      <FontAwesomeIcon className="check" icon={faCircleCheck} onClick={() => { changeStatus(index) }} />
+
+                      <Link to={loggedUser && `/${emailName}/todo?id=${todo.id}&edit=false`}>
+                        <p className={status === "completed" && "todoTitle"}>{todo.title}</p>
+                      </Link>
+                      <div className="icons">
+                        {/* <span onClick={ }>EDIT</span> */}
+                        <Link to={loggedUser && `/${emailName}/todo?id=${todo.id}&edit=true`}> <FontAwesomeIcon icon={faPenToSquare} /></Link>
+
+                        {/* <span onClick={() => deleteTodo(todo.id)}>DEL</span> */}
+                        <FontAwesomeIcon className="deleteIcon" icon={faTrash} onClick={deleteTodo(todo.id)} />
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           )} />

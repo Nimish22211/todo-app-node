@@ -82,19 +82,54 @@ button:disabled:hover {
   align-items: center;
 }
 
-
-.icons>a {
-  padding: 15px 20px;
-  margin: 0;
-  color: darkgreen;
-  font-weight: bold;
-  text-decoration: none;
+.todoTitle {
+  text-decoration: line-through;
 }
 
-.icons>span:nth-child(2) {
+.icons {
+  display: flex;
+  align-items: center;
+  /* gap: 10px; */
+}
+
+.todobox>.check {
+  padding: 18.5px 15px;
+}
+
+.todobox>.checked {
+  background-color: rgb(119, 170, 17)
+}
+
+.todobox>.checked:hover {
+  background-color: rgb(71, 100, 12);
+  transition: 300ms
+}
+
+
+.todobox>.check:not(.checked):hover {
+  background-color: #23b9ff;
+  transition: 300ms
+}
+
+.icons>a {
+  flex: 0.5;
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
   padding: 15px 20px;
-  margin: 0;
-  color: red;
+
+}
+
+.icons>a>.fa-pen-to-square {
+  height: 1em;
+}
+
+.icons>.deleteIcon {
+  flex: 0.5;
+  padding: 18.5px 20px;
+  height: 1em;
+  /* height: 100%; */
+  color: black;
   font-weight: bold;
 }
 
@@ -104,11 +139,10 @@ button:disabled:hover {
   transition: 200ms;
 }
 
-.icons>span:nth-child(2):hover {
+.icons>.deleteIcon:hover {
   background-color: red;
-  color: yellow;
+  color: rgb(255, 255, 0);
   transition: 200ms;
-
 }
 
 .todobox>a {
