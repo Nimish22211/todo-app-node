@@ -76,9 +76,9 @@ function App() {
               </form> : "Loading"}
               <div className="todos">
                 {todos.map((todo, index) => {
-                  let status = todo.completed === "" ? "" : todo.completed === 'completed' ? "completed" : 'not completed';
+                  // let status = todo.completed === "" ? "" : todo.completed === 'completed' ? "completed" : 'not completed';
                   let svgClass = 'svg-inline--fa fa-circle-check'; //default svg class
-                  let checkedColor = status === '' ? 'check ' + svgClass : status === "completed" ? 'check checked ' + svgClass : 'check notdone ' + svgClass
+                  let checkedColor = 'check ' + svgClass;
                   const changeStatus = (index) => {
                     console.log(todo.completed, 'previous val');
                     fetch('http://localhost:8000/update/todo?update=status', {
@@ -89,20 +89,18 @@ function App() {
                       },
                       body: JSON.stringify({
                         email: emailName + '@gmail.com',
-                        title: todo.title,
-                        description: todo.description,
-                        completed: todo.completed,
                         id: todo.id
                       })
+                    }).then(res => res.json()).then(data => {
+                      todo.completed = data.completed
+                      let status = data.completed === "" ? "" : data.completed === 'completed' ? "completed" : 'not completed';
+                      checkedColor = status === '' ? 'check ' + svgClass : status === "completed" ? 'check checked ' + svgClass : 'check notdone ' + svgClass
+                      console.log(data)
+                      document.getElementById('checkIcon' + index).removeAttribute('class');
+                      const attr = document.createAttribute('class');
+                      attr.value = checkedColor
+                      document.getElementById('checkIcon' + index).setAttributeNode(attr)
                     })
-                    // .then(res => res.json()).then(data => {
-                    //   console.log(data.todos, 'new val')
-                    //   setTodos(data.todos.reverse())
-                    // })
-                    // document.getElementById('checkIcon' + index).removeAttribute('class');
-                    // const attr = document.createAttribute('class');
-                    // attr.value = checkedColor
-                    // document.getElementById('checkIcon' + index).setAttributeNode(attr)
                   }
 
 

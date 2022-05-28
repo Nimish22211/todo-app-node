@@ -106,7 +106,7 @@ app.patch('/update/todo', (req, res) => {
     }
 })
 
-const updateTodoStatus = async (email, todoId, title, description, completed) => {
+const updateTodoStatus = async (email, todoId) => {
     let user = await users.findOne({ email })
     let todos = await user.todos
     let todo = await user.todos.find(todo => todo.id === todoId)
@@ -121,7 +121,7 @@ const updateTodoStatus = async (email, todoId, title, description, completed) =>
         console.log('not completed')
     }
 
-    let update = await users.updateOne(
+    await users.updateOne(
         {
             "todos.id": todoId
         },
@@ -131,6 +131,10 @@ const updateTodoStatus = async (email, todoId, title, description, completed) =>
             }
         }
     )
+    return user.todos[index] = {
+        ...todo,
+        completed: todoUpdate
+    }
 }
 
 const updateTodo = () => {
