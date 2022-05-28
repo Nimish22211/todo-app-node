@@ -94,28 +94,47 @@ const deleteTodo = async (email, todoId) => {
 
 }
 
-app.patch('/updatetodo/:id', (req, res) => {
-    const { email, id, title, description, completed } = req.body
-    updateTodo(email, id, title, description, completed)
-        .then(todo => res.send(todo))
-    })
-    
-    const updateTodo = async (email, todoId, title, description, completed) => {
-        const user = await users.findOne({ email })
-        let todos = await user.todos
-        let todo = await user.todos.find(todo => todo.id === todoId)
-        let index = todos.indexOf(todo)
-        let status = completed === ('' || 'not completed' ) ? true : false 
-        console.log(completed, status)
-        // user.todos[index] = {
-        //     id: todoId,
-        //     title,
-        //     description,
-        //     completed:status
-        // }
-        user.save()
-        console.log('update')
-        return user
+
+
+app.patch('/update/todo', (req, res) => {
+    const { update } = req.query
+    const { email, id } = req.body
+    if (update === "status") {
+        updateTodoStatus(email, id).then(todo => res.send(todo))
+    } else {
+        updateTodo()
+    }
+})
+
+const updateTodoStatus = async (email, todoId, title, description, completed) => {
+    let user = await users.findOne({ email })
+    let todos = await user.todos
+    let todo = await user.todos.find(todo => todo.id === todoId)
+    let index = todos.indexOf(todo);
+    let status = user.todos[index].completed;
+    let todoUpdate = "";
+    if (status === "" || status === "not completed") {
+        todoUpdate = "completed"
+        console.log('completed')
+    } else {
+        todoUpdate = "not completed"
+        console.log('not completed')
+    }
+
+    let update = await users.updateOne(
+        {
+            "todos.id": todoId
+        },
+        {
+            "$set": {
+                "todos.$.completed": todoUpdate
+            }
+        }
+    )
+}
+
+const updateTodo = () => {
+
 }
 
 app.get('/:emailName/gettodos', (req, res) => {

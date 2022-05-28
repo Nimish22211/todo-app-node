@@ -22,7 +22,7 @@ function App() {
     // fetch('http://localhost:8000/' + emailName + '@gmail.com').then(res => res.json())
     console.log(todos)
 
-  }, [todos])
+  }, [])
   const addTodo = (e) => {
     e.preventDefault();
     fetch('http://localhost:8000/addtodo', {
@@ -76,12 +76,12 @@ function App() {
               </form> : "Loading"}
               <div className="todos">
                 {todos.map((todo, index) => {
-                  let status = todo.completed === "" ? "" : todo.completed === true ? "completed" : 'not completed';
+                  let status = todo.completed === "" ? "" : todo.completed === 'completed' ? "completed" : 'not completed';
                   let svgClass = 'svg-inline--fa fa-circle-check'; //default svg class
-                  let checkedColor = status === '' ? 'check ' + svgClass : status === "completed"  ? 'check checked ' + svgClass : 'check notdone ' + svgClass
+                  let checkedColor = status === '' ? 'check ' + svgClass : status === "completed" ? 'check checked ' + svgClass : 'check notdone ' + svgClass
                   const changeStatus = (index) => {
-                    console.log(status)
-                    fetch('http://localhost:8000/updatetodo/' + todo.id, {
+                    console.log(todo.completed, 'previous val');
+                    fetch('http://localhost:8000/update/todo?update=status', {
                       method: 'PATCH',
                       headers: {
                         'Content-Type': 'application/json',
@@ -91,25 +91,28 @@ function App() {
                         email: emailName + '@gmail.com',
                         title: todo.title,
                         description: todo.description,
-                        completed: status,
+                        completed: todo.completed,
                         id: todo.id
                       })
-                    }).then(res => res.json()).then(data => {
-                      status = data.completed
                     })
-                    document.getElementById('checkIcon' + index).removeAttribute('class');
-                    const attr = document.createAttribute('class');
-                    attr.value = checkedColor
-                    document.getElementById('checkIcon' + index).setAttributeNode(attr)
+                    // .then(res => res.json()).then(data => {
+                    //   console.log(data.todos, 'new val')
+                    //   setTodos(data.todos.reverse())
+                    // })
+                    // document.getElementById('checkIcon' + index).removeAttribute('class');
+                    // const attr = document.createAttribute('class');
+                    // attr.value = checkedColor
+                    // document.getElementById('checkIcon' + index).setAttributeNode(attr)
                   }
 
 
                   return (
-                    <div className="todobox" >
+                    <div className="todobox" key={index}>
                       <FontAwesomeIcon id={'checkIcon' + index} className={checkedColor} icon={faCircleCheck} onClick={() => { changeStatus(index) }} />
 
                       <Link to={loggedUser && `/${emailName}/todo?id=${todo.id}&edit=false`}>
-                        <p className={status === "completed" && "todoTitle"}>{todo.title}</p>
+                        {/* <p className={status === "completed" && "todoTitle"}>{todo.title}</p> */}
+                        <p>{todo.title}</p>
                       </Link>
                       <div className="icons">
                         {/* <span onClick={ }>EDIT</span> */}
