@@ -76,9 +76,8 @@ function App() {
               </form> : "Loading"}
               <div className="todos">
                 {todos.map((todo, index) => {
-                  // let status = todo.completed === "" ? "" : todo.completed === 'completed' ? "completed" : 'not completed';
                   let svgClass = 'svg-inline--fa fa-circle-check'; //default svg class
-                  let checkedColor = 'check ' + svgClass;
+                  let checkedColor = todo.completed === "" ? 'check ' + svgClass : todo.completed === "completed" ? " check checked " + svgClass : "check notdone " + svgClass;
                   const changeStatus = (index) => {
                     console.log(todo.completed, 'previous val');
                     fetch('http://localhost:8000/update/todo?update=status', {
@@ -100,6 +99,11 @@ function App() {
                       const attr = document.createAttribute('class');
                       attr.value = checkedColor
                       document.getElementById('checkIcon' + index).setAttributeNode(attr)
+                      if (todo.completed === "completed") {
+                        document.getElementById('title').classList.add('todoTitle')
+                      } else {
+                        document.getElementById('title').classList.remove('todoTitle')
+                      }
                     })
                   }
 
@@ -109,8 +113,8 @@ function App() {
                       <FontAwesomeIcon id={'checkIcon' + index} className={checkedColor} icon={faCircleCheck} onClick={() => { changeStatus(index) }} />
 
                       <Link to={loggedUser && `/${emailName}/todo?id=${todo.id}&edit=false`}>
-                        {/* <p className={status === "completed" && "todoTitle"}>{todo.title}</p> */}
-                        <p>{todo.title}</p>
+                        <p id="title" className={todo.completed === "completed" && 'todoTitle'}>{todo.title}</p>
+                        {/* <p>{todo.title}</p> */}
                       </Link>
                       <div className="icons">
                         {/* <span onClick={ }>EDIT</span> */}
