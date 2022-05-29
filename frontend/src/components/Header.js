@@ -9,7 +9,6 @@ function Header({ loggedUser, setLoggedUser, setTodos }) {
     const user = loggedUser;
     const [drop, setDrop] = useState(false)
     let history = useNavigate();
-    // console.log(user)
     useEffect(() => {
         onAuthStateChanged(auth, user => {
             if (user !== null) {
@@ -47,7 +46,6 @@ function Header({ loggedUser, setLoggedUser, setTodos }) {
         setDrop(prev => !prev)
     }
 
-    // console.log(drop)
     return (
         <header>
             <h1>TodoList</h1>

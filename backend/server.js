@@ -48,7 +48,6 @@ async function createUser(name, email, photoURL, todos) {
 }
 
 app.post('/adduser', (req, res) => {
-    // console.log(req.body);
     const { name, email, photoURL, todos } = req.body;
     createUser(name, email, photoURL, todos).then(user => res.send(user))
 })
@@ -57,7 +56,6 @@ const addTodo = async (title, description, completed, email, id) => {
     const user = await users.findOne({ email: email })
     user.todos.push({ title, description, completed, id })
     user.save()
-    console.log('add')
     return user
 }
 
@@ -98,11 +96,11 @@ const deleteTodo = async (email, todoId) => {
 
 app.patch('/update/todo', (req, res) => {
     const { update } = req.query
-    const { email, id } = req.body
+    const { email, id, title, description, completed } = req.body
     if (update === "status") {
         updateTodoStatus(email, id).then(todo => res.send(todo))
     } else {
-        updateTodo()
+        updateTodo(email, id, title, description, completed).then(todo => res.send(todo))
     }
 })
 
@@ -115,10 +113,8 @@ const updateTodoStatus = async (email, todoId) => {
     let todoUpdate = "";
     if (status === "" || status === "not completed") {
         todoUpdate = "completed"
-        console.log('completed')
     } else {
         todoUpdate = "not completed"
-        console.log('not completed')
     }
 
     await users.updateOne(
@@ -137,8 +133,33 @@ const updateTodoStatus = async (email, todoId) => {
     }
 }
 
-const updateTodo = () => {
-
+const updateTodo = async (email, id, title, description, completed) => {
+    let user = await users.findOne({ email })
+    let todos = user.todos
+    let todo = user.todos.find(todo => todo.id === id)
+    let index = todos.indexOf(todo);
+    let todoUpdate = {
+        title,
+        description,
+        id,
+        completed
+    }
+    await users.updateOne(
+        {
+            "todos.id": id
+        },
+        {
+            "$set": {
+                "todos.$.title": title,
+                "todos.$.description": description,
+                "todos.$.completed": completed,
+                "todos.$.id": id
+            }
+        }
+    )
+    return user.todos[index] = {
+        ...todoUpdate
+    }
 }
 
 app.get('/:emailName/gettodos', (req, res) => {

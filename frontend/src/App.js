@@ -2,7 +2,7 @@ import './App.css';
 import Login from './components/Login';
 import Header from './components/Header';
 import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Todo from './components/Todo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,14 +15,7 @@ function App() {
   const [input, setInput] = useState('');
   const [desc, setDesc] = useState('');
   const emailName = loggedUser && loggedUser.email.split('@')[0];
-  // const history = useNavigate();
 
-  useEffect(() => {
-    console.clear()
-    // fetch('http://localhost:8000/' + emailName + '@gmail.com').then(res => res.json())
-    console.log(todos)
-
-  }, [])
   const addTodo = (e) => {
     e.preventDefault();
     fetch('http://localhost:8000/addtodo', {
@@ -79,7 +72,6 @@ function App() {
                   let svgClass = 'svg-inline--fa fa-circle-check'; //default svg class
                   let checkedColor = todo.completed === "" ? 'check ' + svgClass : todo.completed === "completed" ? " check checked " + svgClass : "check notdone " + svgClass;
                   const changeStatus = (index) => {
-                    console.log(todo.completed, 'previous val');
                     fetch('http://localhost:8000/update/todo?update=status', {
                       method: 'PATCH',
                       headers: {
@@ -94,7 +86,6 @@ function App() {
                       todo.completed = data.completed
                       let status = data.completed === "" ? "" : data.completed === 'completed' ? "completed" : 'not completed';
                       checkedColor = status === '' ? 'check ' + svgClass : status === "completed" ? 'check checked ' + svgClass : 'check notdone ' + svgClass
-                      console.log(data)
                       document.getElementById('checkIcon' + index).removeAttribute('class');
                       const attr = document.createAttribute('class');
                       attr.value = checkedColor
@@ -110,17 +101,13 @@ function App() {
 
                   return (
                     <div className="todobox" key={index}>
-                      <FontAwesomeIcon id={'checkIcon' + index} className={checkedColor} icon={faCircleCheck} onClick={() => { changeStatus(index) }} />
+                      <FontAwesomeIcon id={'checkIcon' + index} className={checkedColor ? checkedColor : 'check ' + svgClass} icon={faCircleCheck} onClick={() => { changeStatus(index) }} />
 
                       <Link to={loggedUser && `/${emailName}/todo?id=${todo.id}&edit=false`}>
-                        <p id="title" className={todo.completed === "completed" && 'todoTitle'}>{todo.title}</p>
-                        {/* <p>{todo.title}</p> */}
+                        <p id="title" className={todo.completed === "completed" ? 'todoTitle' : ""}>{todo.title}</p>
                       </Link>
                       <div className="icons">
-                        {/* <span onClick={ }>EDIT</span> */}
                         <Link to={loggedUser && `/${emailName}/todo?id=${todo.id}&edit=true`}> <FontAwesomeIcon icon={faPenToSquare} /></Link>
-
-                        {/* <span onClick={() => deleteTodo(todo.id)}>DEL</span> */}
                         <FontAwesomeIcon className="deleteIcon" icon={faTrash} onClick={() => deleteTodo(todo.id)} />
                       </div>
                     </div>

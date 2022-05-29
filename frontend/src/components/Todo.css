@@ -79,3 +79,14 @@
 .todo-status>input {
     accent-color: yellow;
 }
+
+.red-border {
+    border-color: red;
+    box-shadow: 0 0 10px red;
+}
+
+.green-border {
+    border-color: greenyellow;
+    box-shadow: 0 0 10px greenyellow;
+
+}

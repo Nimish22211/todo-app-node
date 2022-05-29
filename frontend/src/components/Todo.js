@@ -1,5 +1,6 @@
+// import { faTarpDroplet } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import './Todo.css'
 
 function Todo({ emailName }) {
@@ -18,32 +19,40 @@ function Todo({ emailName }) {
             setTodo(data)
             setTitle(data.title)
             setDescription(data.description)
-            setChecked(data.completed)
+            if (data.completed === "completed") {
+                setChecked(true)
+            } else {
+                setChecked(false)
+            }
         })())
         if (edit === "false") {
             setModal(false)
         } else {
             setModal(true)
         }
-    }, [])
+    }, [search, emailName])
 
     //TODO: completed status of todo is not being linked with the checkbox 
 
     const checkBox = (e) => {
-        e.currentTarget.checked ? setTodo({ ...todo, completed: true }) : setTodo({ ...todo, completed: false })
-        setChecked(!checked)
+        setChecked(e)
     }
     useEffect(() => {
-        let checkbox = document.getElementById('checkbox')
-        if (checkbox) {
-            document.getElementById('checkbox').checked = checked
+        let checkbox = document.getElementById("checkbox")
+        if (checkbox && checked === true) {
+            checkbox.checked = "checked"
+            todo.completed = "completed"
+        } else if (checkbox && checked === false) {
+            checkbox.checked = ''
+            todo.completed = "not completed"
         }
-    }, [checked])
+
+    }, [checked, todo])
 
     const updateTodo = () => {
         let confirm = window.confirm("Are you sure you want to save?")
         if (confirm) {
-            fetch('http://localhost:8000/updatetodo/' + todo.id, {
+            fetch('http://localhost:8000/update/todo?update=full', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,14 +62,18 @@ function Todo({ emailName }) {
                     email: emailName + '@gmail.com',
                     title: title,
                     description: description,
-                    completed: checked,
+                    completed: todo.completed,
                     id: todo.id
                 })
             }).then(res => res.json()).then(data => (() => {
                 setTodo(data)
                 setTitle(data.title)
                 setDescription(data.description)
-                setChecked(data.completed)
+                if (data.completed === "completed") {
+                    setChecked(true)
+                } else {
+                    setChecked(false)
+                }
             })())
         }
     }
@@ -70,9 +83,10 @@ function Todo({ emailName }) {
             <button onClick={() => window.location.href = 'http://localhost:3000/' + emailName}>Back</button>
             {modal === false ? <>
                 <div className="center-info">
-                    <main className="todo-info">
+                    <main className={todo.completed === "" ? 'todo-info' : todo.completed === "not completed" ? "todo-info red-border" : "todo-info green-border"}>
                         <h1>{todo.title}</h1>
                         <p className="todo-desc">{todo.description === "" ? "no description" : todo.description}</p>
+                        <p>Status: Task {todo.completed === "" ? "initialized" : todo.completed} </p>
                     </main>
                 </div>
                 <button onClick={() => setModal(true)}>Edit</button>
@@ -81,8 +95,8 @@ function Todo({ emailName }) {
                     <div className="modal-content inputs">
                         <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="change title" />
                         <input type="text" value={description} placeholder="change description" onChange={e => setDescription(e.target.value)} />
-                        <span className="todo-status">Completed
-                            <input type="checkbox" value={checked} id="checkbox" onChange={(e) => checkBox(e)} />
+                        <span className="todo-status">Completed :
+                            <input type="checkbox" id="checkbox" onChange={(e) => checkBox(e.target.checked)} />
                         </span>
                     </div>
                     <button onClick={updateTodo}> Save</button>
