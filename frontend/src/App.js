@@ -77,7 +77,7 @@ function App() {
                   <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="Todo Title" />
                   <input type="text" value={desc} onChange={e => setDesc(e.target.value)} placeholder='Todo Description' />
                 </div>
-                <button type="submit" onClick={addTodo}>Add</button>
+                <button type="submit" onClick={addTodo} disabled={!input.match(/\w/) ? true : false}>Add</button>
                 {/* set disabled version of submit button */}
               </form> : "Loading"}
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginTop: '50px' }}>
