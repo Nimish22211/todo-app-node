@@ -2,7 +2,7 @@ import './App.css';
 import Login from './components/Login';
 import Header from './components/Header';
 import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Todo from './components/Todo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -33,7 +33,6 @@ function App() {
     }).then(res => res.json()).then(data => setTodos(data.todos.reverse()))
     setInput('')
     setDesc('')
-
   }
 
   const deleteTodo = (id) => {
@@ -48,6 +47,20 @@ function App() {
         id: id
       })
     }).then(res => res.json()).then(data => setTodos(data.todos.reverse()))
+
+  }
+
+  const deleteAll = () => {
+    fetch('http://localhost:8000/deleteall', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Methods': 'PATCH'
+      },
+      body: JSON.stringify({
+        email: loggedUser.email,
+      })
+    }).then(res => res.json).then(data => setTodos([]))
   }
 
   return (
@@ -67,8 +80,12 @@ function App() {
                 <button type="submit" onClick={addTodo}>Add</button>
                 {/* set disabled version of submit button */}
               </form> : "Loading"}
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginTop: '50px' }}>
+
+                <button className="deleteAll" disabled={todos.length >= 1 ? false : true} onClick={() => { deleteAll() }}>Delete All</button>
+              </div>
               <div className="todos">
-                {todos.map((todo, index) => {
+                {todos.length > 0 && todos.map((todo, index) => {
                   let svgClass = 'svg-inline--fa fa-circle-check'; //default svg class
                   let checkedColor = todo.completed === "" ? 'check ' + svgClass : todo.completed === "completed" ? " check checked " + svgClass : "check notdone " + svgClass;
                   const changeStatus = (index) => {

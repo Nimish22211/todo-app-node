@@ -47,6 +47,7 @@ details {
   text-align: center;
 }
 
+
 button:disabled {
   background-color: #72bce1;
   cursor: not-allowed;
@@ -54,6 +55,24 @@ button:disabled {
 
 button:disabled:hover {
   background-color: #72bce1;
+}
+
+.deleteAll {
+  font-size: 20px;
+  background-color: #de1d2a;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.deleteAll:hover {
+  background-color: red;
+}
+
+.deleteAll:disabled,
+.deleteAll:disabled:hover {
+  background-color: #f5555f;
 }
 
 .main {
@@ -111,7 +130,7 @@ button:disabled:hover {
   transition: 300ms
 }
 
-.todobox > .notdone {
+.todobox>.notdone {
   background-color: red;
 }
 

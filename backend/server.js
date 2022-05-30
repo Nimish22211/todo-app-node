@@ -162,6 +162,18 @@ const updateTodo = async (email, id, title, description, completed) => {
     }
 }
 
+app.patch('/deleteall', (req, res) => {
+    const { email } = req.body
+    deleteAllTodos(email).then(user => res.send(user))
+})
+
+const deleteAllTodos = async (email) => {
+    const user = await users.findOne({ email })
+    user.todos = []
+    user.save()
+    return user
+}
+
 app.get('/:emailName/gettodos', (req, res) => {
     const { email } = req.params
     getTodos(email).then(todos => res.send(todos))
